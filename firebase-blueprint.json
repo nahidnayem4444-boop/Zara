@@ -1,0 +1,212 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with display name, bio, settings, and metrics",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner auth UID" },
+        "username": { "type": "string", "description": "Unique handle" },
+        "displayName": { "type": "string", "description": "Display name" },
+        "bio": { "type": "string", "description": "Short bio" },
+        "avatarUrl": { "type": "string", "description": "Avatar image URL or placeholder ID" },
+        "isPrivate": { "type": "boolean", "description": "Whether account requires follow requests" },
+        "isOnline": { "type": "boolean", "description": "Online presence status" },
+        "followersCount": { "type": "integer", "description": "Total followers count" },
+        "followingCount": { "type": "integer", "description": "Total following count" },
+        "postsCount": { "type": "integer", "description": "Total posts published" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["userId", "username", "displayName", "createdAt", "updatedAt"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "User post containing text, optional media, and counters",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string", "description": "Post ID" },
+        "authorId": { "type": "string", "description": "User UID of author" },
+        "authorUsername": { "type": "string", "description": "Username handle" },
+        "authorDisplayName": { "type": "string", "description": "Display name" },
+        "authorAvatarUrl": { "type": "string", "description": "Avatar URL" },
+        "content": { "type": "string", "description": "Post text body" },
+        "imageUrl": { "type": "string", "description": "Optional image URL or asset ID" },
+        "likesCount": { "type": "integer", "description": "Total likes" },
+        "commentsCount": { "type": "integer", "description": "Total comments" },
+        "repostsCount": { "type": "integer", "description": "Total shares/reposts" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Post creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Post updated timestamp" }
+      },
+      "required": ["postId", "authorId", "authorUsername", "authorDisplayName", "content", "createdAt", "updatedAt"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Comment left on a post",
+      "type": "object",
+      "properties": {
+        "commentId": { "type": "string", "description": "Comment ID" },
+        "postId": { "type": "string", "description": "Post ID" },
+        "authorId": { "type": "string", "description": "Comment author UID" },
+        "authorUsername": { "type": "string", "description": "Author username" },
+        "authorDisplayName": { "type": "string", "description": "Author display name" },
+        "authorAvatarUrl": { "type": "string", "description": "Author avatar URL" },
+        "content": { "type": "string", "description": "Comment text" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp created" }
+      },
+      "required": ["commentId", "postId", "authorId", "authorUsername", "authorDisplayName", "content", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Single real-time chat message in a conversation",
+      "type": "object",
+      "properties": {
+        "messageId": { "type": "string", "description": "Unique message ID" },
+        "conversationId": { "type": "string", "description": "Parent conversation ID" },
+        "participantIds": { "type": "array", "description": "Denormalized participants list" },
+        "senderId": { "type": "string", "description": "Message sender UID" },
+        "senderName": { "type": "string", "description": "Sender display name" },
+        "text": { "type": "string", "description": "Message text body" },
+        "imageUrl": { "type": "string", "description": "Optional image URL or asset" },
+        "replyToId": { "type": "string", "description": "Optional replied message ID" },
+        "replyToText": { "type": "string", "description": "Optional replied message text preview" },
+        "status": { "type": "string", "enum": ["sent", "delivered", "seen"], "description": "Delivery/read state" },
+        "isDeleted": { "type": "boolean", "description": "Whether message was deleted by sender" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Message creation timestamp" }
+      },
+      "required": ["messageId", "conversationId", "participantIds", "senderId", "senderName", "text", "status", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct message thread between two users",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string", "description": "Conversation ID" },
+        "participantIds": { "type": "array", "description": "List of participant UIDs (size 2)" },
+        "lastMessageText": { "type": "string", "description": "Snippet of last message" },
+        "lastMessageSenderId": { "type": "string", "description": "UID of last sender" },
+        "lastMessageTimestamp": { "type": "string", "format": "date-time", "description": "Timestamp of last message" },
+        "typingUserId": { "type": "string", "description": "UID currently typing" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Conversation start time" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Conversation update time" }
+      },
+      "required": ["conversationId", "participantIds", "createdAt", "updatedAt"]
+    },
+    "Follow": {
+      "title": "Follow",
+      "description": "Relationship between follower and following user",
+      "type": "object",
+      "properties": {
+        "followerId": { "type": "string", "description": "UID initiating follow" },
+        "followingId": { "type": "string", "description": "UID being followed" },
+        "status": { "type": "string", "enum": ["accepted", "pending"], "description": "Follow approval state" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp created" }
+      },
+      "required": ["followerId", "followingId", "status", "createdAt"]
+    },
+    "PostLike": {
+      "title": "PostLike",
+      "description": "Record of a user liking a post",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "User who liked" },
+        "postId": { "type": "string", "description": "Post liked" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp liked" }
+      },
+      "required": ["userId", "postId", "createdAt"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User activity notification",
+      "type": "object",
+      "properties": {
+        "notificationId": { "type": "string", "description": "Notification ID" },
+        "userId": { "type": "string", "description": "Target receiver UID" },
+        "senderId": { "type": "string", "description": "Triggering user UID" },
+        "senderUsername": { "type": "string", "description": "Triggering username" },
+        "senderDisplayName": { "type": "string", "description": "Triggering display name" },
+        "type": { "type": "string", "enum": ["like", "comment", "follow", "follow_request", "message"], "description": "Notification type" },
+        "targetId": { "type": "string", "description": "Associated post or conversation ID" },
+        "content": { "type": "string", "description": "Notification message summary" },
+        "isRead": { "type": "boolean", "description": "Read state" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Created timestamp" }
+      },
+      "required": ["notificationId", "userId", "senderId", "senderUsername", "senderDisplayName", "type", "content", "isRead", "createdAt"]
+    },
+    "Block": {
+      "title": "Block",
+      "description": "Blocked user mapping",
+      "type": "object",
+      "properties": {
+        "blockerId": { "type": "string", "description": "UID who initiated block" },
+        "blockedId": { "type": "string", "description": "UID who is blocked" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["blockerId", "blockedId", "createdAt"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "User or content report submission",
+      "type": "object",
+      "properties": {
+        "reportId": { "type": "string", "description": "Report ID" },
+        "reporterId": { "type": "string", "description": "UID submitting report" },
+        "targetType": { "type": "string", "enum": ["user", "post"], "description": "Report category" },
+        "targetId": { "type": "string", "description": "Reported item ID" },
+        "reason": { "type": "string", "description": "Reason for report" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Submission timestamp" }
+      },
+      "required": ["reportId", "reporterId", "targetType", "targetId", "reason", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles collection"
+    },
+    "/posts/{postId}": {
+      "schema": { "$ref": "#/entities/Post" },
+      "description": "Social media posts collection"
+    },
+    "/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Global or top-level post comments collection"
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Post-scoped comments subcollection"
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Global or direct chat messages collection"
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "1-to-1 conversation metadata"
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Conversation-scoped messages subcollection"
+    },
+    "/follows/{followId}": {
+      "schema": { "$ref": "#/entities/Follow" },
+      "description": "User follow relationships"
+    },
+    "/posts/{postId}/likes/{userId}": {
+      "schema": { "$ref": "#/entities/PostLike" },
+      "description": "Post likes subcollection"
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "Notifications for a user"
+    },
+    "/blocks/{blockId}": {
+      "schema": { "$ref": "#/entities/Block" },
+      "description": "Blocked users collection"
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/Report" },
+      "description": "Safety reports collection"
+    }
+  }
+}

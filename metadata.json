@@ -1,0 +1,6 @@
+{
+  "name": "ZARA",
+  "description": "A clean, lightweight social media app with simple posting and real-time chat.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
